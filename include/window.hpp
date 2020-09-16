@@ -21,6 +21,6 @@ class Window
     void clean();
     bool running() {return isRunning; }
 
-}
+};
 
 #endif

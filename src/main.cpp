@@ -3,10 +3,11 @@
 Window *window = nullptr;
 
 int main(int argc, char *argv[]){
+    std::cout << argc << argv[0] << std::endl;
     const int FPS = 60;
     const int frameDelay = 1000 / FPS;
     Uint32 frameStart;
-    int frameTime;
+    Uint32 frameTime;
 
     window = new Window();
     window->init("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 250, false);
@@ -16,20 +17,18 @@ int main(int argc, char *argv[]){
         frameStart = SDL_GetTicks();
 
         // handle window changes, updates, and render
-        window->handleRequests();        
+        window->handleRequest();        
         window->update();        
         window->render();
 
         // time it took to handle requests
-        frameTime = SDL_GetTicks - frameStart;
+        frameTime = SDL_GetTicks() - frameStart;
         if(frameDelay > frameTime) {
-            SDL_Delay(frameDelay - frameTime)
+            SDL_Delay(frameDelay - frameTime);
         }
     }
 
-
-    std::cout << argc << " " << argv[0] << std::endl;
-
+    window->clean();
 
     return 0;
 }
