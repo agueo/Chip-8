@@ -174,11 +174,11 @@ void Cpu::reset_system() {
     // Reset PC
     PC = 0x200;
     // Clear Stack
-    memset(stack, 0, 16);
+    memset(stack, 0, sizeof(stack));
     // Clear display
-    memset(frame_buffer, 0, 16);
+    memset(frame_buffer, 0, sizeof(frame_buffer));
     // Reset register values
-    memset(v, 0, 16);
+    memset(v, 0, sizeof(v));
     // Reset keyboard
     memset(key_state, 0, sizeof(key_state));
     memset(saved_key_state, 0, sizeof(saved_key_state));

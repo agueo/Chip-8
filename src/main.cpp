@@ -7,6 +7,7 @@
 #include "../include/window.hpp"
 #include "../include/cpu.hpp"
 
+// Could change to local var
 Window *window = nullptr;
 Cpu *cpu = nullptr;
 
