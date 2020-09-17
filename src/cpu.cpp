@@ -13,7 +13,7 @@ void Cpu::init_cpu(){
     memset(memory, 0, sizeof(memory));
     memset(stack, 0, sizeof(stack));
     memset(key_state, 0, sizeof(key_state));
-    memset(key_state, 0, sizeof(saved_key_state));
+    memset(saved_key_state, 0, sizeof(saved_key_state));
     memset(frame_buffer, 0, sizeof(frame_buffer));
 
     // initialize pointers and flags
@@ -35,6 +35,7 @@ void Cpu::init_cpu(){
 
 /*
  * FIXME - BUG when reading in some files
+ * Look into reading files using C++ iostream/fstream
  */
 bool Cpu::loadRom(const char *filename) 
 {
@@ -166,4 +167,19 @@ void Cpu::decode_execute(){
             exit(EXIT_FAILURE);
             break;
     }
+}
+
+void Cpu::reset_system() {
+    op = nullptr;
+    // Reset PC
+    PC = 0x200;
+    // Clear Stack
+    memset(stack, 0, 16);
+    // Clear display
+    memset(frame_buffer, 0, 16);
+    // Reset register values
+    memset(v, 0, 16);
+    // Reset keyboard
+    memset(key_state, 0, sizeof(key_state));
+    memset(saved_key_state, 0, sizeof(saved_key_state));
 }

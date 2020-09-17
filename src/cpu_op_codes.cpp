@@ -11,6 +11,7 @@ void Cpu::op0(uint16_t _op){
 
     if(lo == 0xE0) {
         printf("DISP CLS\n");
+        // TODO - 
         // clear screen pixels
         // set draw flag
         // inc PC
@@ -121,7 +122,8 @@ void Cpu::op8(uint16_t _op){
             break;
         case 0x5:
             printf("SUB* V%X V%X\n", x, y);
-            // TODO - borrow flag
+            // borrow flag - if borrow necessary -> 0 else 1
+            v[0xf] = (v[y] > v[x]) ? 0 : 1;
             v[x] = v[x] - v[y];
             break;
         case 0x6:
@@ -131,7 +133,8 @@ void Cpu::op8(uint16_t _op){
             break;
         case 0x7:
             printf("SUB* V%X V%X\n", y, x);
-            // TODO - Borrow flag
+            // borrow flag - if borrow necessary -> 0 else 1
+            v[0xf] = (v[x] > v[y]) ? 0 : 1;
             v[x] = v[y] - v[x];
             break;
         case 0xE:
@@ -178,6 +181,7 @@ void Cpu::opC(uint16_t _op){
 
 void Cpu::opD(uint16_t _op){
     printf("DRAW 0x%03X\n", _op);
+    // TODO - draw function
     incrementPC();
 }
 
@@ -233,6 +237,7 @@ void Cpu::opF(uint16_t _op){
             break;
         case 0x33:
             printf("BCD\n");
+            // TODO - add func
             break;
         case 0x55:
             printf("REG DUMP\n");
