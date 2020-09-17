@@ -218,6 +218,7 @@ void Cpu::opF(uint16_t _op){
             break;
         case 0x0A:
             printf("KEY WAIT\n");
+            // TODO - blocking operation 
             break;
         case 0x15:
             printf("TIMER SET\n");
@@ -237,7 +238,13 @@ void Cpu::opF(uint16_t _op){
             break;
         case 0x33:
             printf("BCD\n");
-            // TODO - add func
+            // ones place
+            memory[I + 2] = v[x] % 10;
+            v[x] /= 10;
+            // tens place
+            memory[I + 1] = v[x] % 10;
+            // hundreds place
+            memory[I] = v[x] / 10
             break;
         case 0x55:
             printf("REG DUMP\n");
