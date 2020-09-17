@@ -4,7 +4,7 @@ LDFLAGS 	:= `sdl2-config --libs --cflags` -lSDL2_image -lm
 BUILD 		:= ./build
 OBJ_DIR		:= $(BUILD)/objects
 APP_DIR		:= $(BUILD)/apps
-TARGET		:= program
+TARGET		:= chip_8
 INCLUDE		:= -Iinclude/
 SRC			:= \
 	$(wildcard src/*.cpp)
@@ -21,7 +21,7 @@ $(APP_DIR)/$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -o $(APP_DIR)/$(TARGET) $^ $(LDFLAGS)
 
-.PHONY: all build clean debug release
+.PHONY: all build clean debug release run
 
 build:
 	@mkdir -p ${APP_DIR}
@@ -32,6 +32,9 @@ debug: all
 
 release: CXXFLAGS += -O2
 release: all
+
+run: 
+	$(APP_DIR)/$(TARGET) ROMS/programs/ClockProgram.ch8
 
 clean:
 	-@rm -rvf $(OBJ_DIR)/*

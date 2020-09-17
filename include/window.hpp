@@ -9,7 +9,6 @@ class Window
     SDL_Window *window;
     SDL_Renderer *renderer;
     bool isRunning;
-    int cnt;
 
     public:
     Window();

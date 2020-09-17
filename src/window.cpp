@@ -6,7 +6,6 @@ Window::~Window() {}
 void Window::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
     int flags = 0;
-    cnt = 0;
     if (fullscreen) {
         flags = SDL_WINDOW_FULLSCREEN;
     }
@@ -42,7 +41,6 @@ void Window::handleRequest() {
 }
 
 void Window::update() {
-    std::cout << cnt++ << std::endl;
 }
 
 void Window::render() {
