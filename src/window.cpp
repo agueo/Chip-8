@@ -31,6 +31,8 @@ int Window::init(const char *title, int xpos, int ypos, int width, int height, b
         if(!texture) return 1;
         std::cout << "Texture Created... " << std::endl;
 
+        SDL_RenderClear(renderer);
+        SDL_RenderPresent(renderer);
         std::cout << "setting run flag..." << std::endl;
         isRunning = true;
     }
@@ -51,7 +53,7 @@ void Window::handleRequest() {
 
 void Window::draw(Cpu _cpu) {
     if(_cpu.canDraw()) {
-        // SDL_RenderClear(renderer);
+       SDL_RenderClear(renderer);
        SDL_UpdateTexture(texture, NULL, _cpu.frame_buffer, WIDTH * sizeof(uint32_t));
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);

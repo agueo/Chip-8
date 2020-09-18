@@ -258,7 +258,7 @@ void Cpu::opF(uint16_t _op){
             break;
         case 0x29:
             printf("SPRITE\n");
-            I = (uint16_t) v[x];
+            I = (uint16_t) v[x] * 5;
             break;
         case 0x33:
             printf("BCD\n");
