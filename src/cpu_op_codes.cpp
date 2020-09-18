@@ -13,7 +13,9 @@ void Cpu::op0(uint16_t _op){
         printf("DISP CLS\n");
         // TODO - 
         // clear screen pixels
+        memset(frame_buffer, BLACK_PIXEL, sizeof(frame_buffer));
         // set draw flag
+        setDrawFlag(true);
         // inc PC
         incrementPC();
     } else if (lo == 0xEE) {
@@ -180,8 +182,29 @@ void Cpu::opC(uint16_t _op){
 }
 
 void Cpu::opD(uint16_t _op){
+    uint8_t x, y, height;
+    x = (_op  & 0xF00) >> 8;
+    y = (_op  & 0x0F0) >> 4;
+    height = (_op  & 0x00F);
     printf("DRAW 0x%03X\n", _op);
-    // TODO - draw function
+
+    v[0xF] = 0;
+    for(int line = 0; line < height; line++) {
+        for(int bit = 0; bit < 8; bit++) {
+            uint32_t sprite = memory[I + line];
+            // get the pixel to set from MSB
+            // if we need to set the pixel 
+            if(sprite & (0x80 >> bit)) {
+                uint32_t index = (((v[x] + bit) % WIDTH) + ((v[y] + line) % HEIGHT) * WIDTH);
+                if(frame_buffer[index] == WHITE_PIXEL) {
+                    v[0xf] = 1;
+                }
+                frame_buffer[index] ^= WHITE_PIXEL;
+            }
+        }
+    }
+
+    setDrawFlag(true);
     incrementPC();
 }
 
@@ -219,6 +242,7 @@ void Cpu::opF(uint16_t _op){
         case 0x0A:
             printf("KEY WAIT\n");
             // TODO - blocking operation 
+            PC -= 2;
             break;
         case 0x15:
             printf("TIMER SET\n");
@@ -244,7 +268,7 @@ void Cpu::opF(uint16_t _op){
             // tens place
             memory[I + 1] = v[x] % 10;
             // hundreds place
-            memory[I] = v[x] / 10
+            memory[I] = v[x] / 10;
             break;
         case 0x55:
             printf("REG DUMP\n");

@@ -14,7 +14,7 @@ void Cpu::init_cpu(){
     memset(stack, 0, sizeof(stack));
     memset(key_state, 0, sizeof(key_state));
     memset(saved_key_state, 0, sizeof(saved_key_state));
-    memset(frame_buffer, 0, sizeof(frame_buffer));
+    memset(frame_buffer, BLACK_PIXEL, sizeof(frame_buffer));
 
     // initialize pointers and flags
     I = 0;
@@ -33,7 +33,7 @@ void Cpu::init_cpu(){
     std::cout << "Initialization complete!" << std::endl;
 }
 
-/*
+/* TODO - optimize RC
  * FIXME - BUG when reading in some files
  * Look into reading files using C++ iostream/fstream
  */
@@ -49,8 +49,8 @@ bool Cpu::loadRom(const char *filename)
 
     // get the filesize 
     fseek(fp, 0l, SEEK_END);
-    int file_size = ftell(fp);
-    fseek(fp, 0l, SEEK_SET);
+    uint file_size = ftell(fp);
+    rewind(fp);
 
     std::cout << "Filesize: " << file_size << std::endl;
 
@@ -60,23 +60,31 @@ bool Cpu::loadRom(const char *filename)
     }
 
     std::cout << "Creating buffer for file contents" << std::endl;
-    uint8_t *buffer = (uint8_t *)malloc(sizeof(file_size));
+    uint8_t *buffer = (uint8_t *)calloc(1, sizeof(uint8_t) * file_size);
+
     std::cout << "Reading in contents" << std::endl;
-    fread(buffer, file_size, 1, fp);
+    size_t bytes = fread(buffer, sizeof(uint8_t), file_size, fp);
+
     std::cout << "Closing filehandle" << std::endl;
     fclose(fp);
+
     std::cout << "Closed filehandle" << std::endl;
+    if(bytes != file_size) {
+        std::cout << "Failed to read FILE!";
+        free(buffer);
+        return 0;
+    }
 
     std::cout << "Trying to copy ROM to memory" << std::endl;
     // copy the ROM data to memory
-    for(int i = 0; i < file_size; ++i) {
+    for(uint i = 0; i < file_size; ++i) {
         memory[0x200 + i] = buffer[i];
     }
     std::cout << "ROM Copied successfully!\n" << std::endl;
 
     free(buffer);
 
-    return true;
+    return 1;
 }
 
 /*
@@ -176,10 +184,15 @@ void Cpu::reset_system() {
     // Clear Stack
     memset(stack, 0, sizeof(stack));
     // Clear display
-    memset(frame_buffer, 0, sizeof(frame_buffer));
+    memset(frame_buffer, BLACK_PIXEL, sizeof(frame_buffer));
     // Reset register values
     memset(v, 0, sizeof(v));
     // Reset keyboard
     memset(key_state, 0, sizeof(key_state));
     memset(saved_key_state, 0, sizeof(saved_key_state));
+}
+
+void Cpu::decrementTimers() {
+    sound--;
+    delay--;
 }

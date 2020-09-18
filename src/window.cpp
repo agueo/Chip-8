@@ -1,31 +1,40 @@
 #include "../include/window.hpp"
 
-Window::Window() {}
+Window::Window()
+{
+    window = nullptr;
+    renderer = nullptr;
+    texture = nullptr;
+    isRunning = false;
+}
+
 Window::~Window() {}
 
-void Window::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
+int Window::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
-    int flags = 0;
+    int flags = SDL_WINDOW_SHOWN;
     if (fullscreen) {
-        flags = SDL_WINDOW_FULLSCREEN;
+        flags |= SDL_WINDOW_FULLSCREEN;
     }
 
     // initialize 
     if(SDL_Init(SDL_INIT_EVERYTHING) == 0) {
         window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-        if(window) {
-            std::cout << "Window Created ..." << std::endl;
-        }
-        renderer = SDL_CreateRenderer(window, -1, 0);
-        if(renderer) {
-            SDL_SetRenderDrawColor(renderer, 255,255,255,255);
-            std::cout << "Renderer Created ..." << std::endl;
-        }
+        if(!window) return 1;
+        std::cout << "Window Created ..." << std::endl;
 
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        if(!renderer) return 1;
+        std::cout << "Renderer Created ..." << std::endl;
+
+        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, WIDTH, HEIGHT);
+        if(!texture) return 1;
+        std::cout << "Texture Created... " << texture << std::endl;
+
+        std::cout << "setting run flag..." << std::endl;
         isRunning = true;
-    } else {
-        isRunning = false;
     }
+    return 0;
 }
 
 void Window::handleRequest() {
@@ -40,17 +49,25 @@ void Window::handleRequest() {
     }
 }
 
-void Window::update() {
+void Window::update(Cpu _cpu) {
+    if(_cpu.canDraw()){
+       SDL_UpdateTexture(texture, NULL, _cpu.frame_buffer, WIDTH * sizeof(uint32_t));
+    }
 }
 
-void Window::render() {
-    SDL_RenderClear(renderer);
-    // place things to render here
-    SDL_RenderPresent(renderer);
+void Window::render(Cpu _cpu) {
+    if(_cpu.canDraw()) {
+        // SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderPresent(renderer);
+    }
 }
 
 void Window::clean() {
+    SDL_DestroyTexture(texture);
+    std::cout << "Texture destroyed!" << std::endl;
     SDL_DestroyRenderer(renderer);
+    std::cout << "Renderer destroyed!" << std::endl;
     SDL_DestroyWindow(window);
     std::cout << "Window destroyed!" << std::endl;
 }
