@@ -22,8 +22,7 @@ class Window
     ~Window();
     int init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
     void handleRequest();
-    void update(Cpu _cpu);
-    void render(Cpu _cpu);
+    void draw(Cpu _cpu);
     void clean();
     bool running() { return isRunning; }
 };

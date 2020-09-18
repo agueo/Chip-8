@@ -14,7 +14,7 @@ void Cpu::init_cpu(){
     memset(stack, 0, sizeof(stack));
     memset(key_state, 0, sizeof(key_state));
     memset(saved_key_state, 0, sizeof(saved_key_state));
-    memset(frame_buffer, BLACK_PIXEL, sizeof(frame_buffer));
+    memset(frame_buffer, WHITE_PIXEL, sizeof(frame_buffer));
 
     // initialize pointers and flags
     I = 0;

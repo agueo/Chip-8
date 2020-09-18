@@ -69,8 +69,7 @@ int main(int argc, char *argv[]){
         // handle window changes, updates, and render
         window->handleRequest();        
 
-        window->update(*cpu);
-        window->render(*cpu);
+        window->draw(*cpu);
 
         // reset draw flag
         cpu->setDrawFlag(false);

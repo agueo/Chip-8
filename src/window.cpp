@@ -27,9 +27,9 @@ int Window::init(const char *title, int xpos, int ypos, int width, int height, b
         if(!renderer) return 1;
         std::cout << "Renderer Created ..." << std::endl;
 
-        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, WIDTH, HEIGHT);
+        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
         if(!texture) return 1;
-        std::cout << "Texture Created... " << texture << std::endl;
+        std::cout << "Texture Created... " << std::endl;
 
         std::cout << "setting run flag..." << std::endl;
         isRunning = true;
@@ -49,15 +49,10 @@ void Window::handleRequest() {
     }
 }
 
-void Window::update(Cpu _cpu) {
-    if(_cpu.canDraw()){
-       SDL_UpdateTexture(texture, NULL, _cpu.frame_buffer, WIDTH * sizeof(uint32_t));
-    }
-}
-
-void Window::render(Cpu _cpu) {
+void Window::draw(Cpu _cpu) {
     if(_cpu.canDraw()) {
         // SDL_RenderClear(renderer);
+       SDL_UpdateTexture(texture, NULL, _cpu.frame_buffer, WIDTH * sizeof(uint32_t));
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
     }
