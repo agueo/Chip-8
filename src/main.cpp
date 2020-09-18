@@ -69,19 +69,20 @@ int main(int argc, char *argv[]){
         // handle window changes, updates, and render
         window->handleRequest();        
 
-        window->draw(*cpu);
+        // Handle screen updates
+        window->draw(cpu->canDraw(), cpu->frame_buffer);
 
         // reset draw flag
         cpu->setDrawFlag(false);
+        
+        // handle updating timers 
+        cpu->decrementTimers();
 
         // time it took to handle requests
         frameTime = SDL_GetTicks() - frameStart;
         if(frameDelay > frameTime) {
             SDL_Delay(frameDelay - frameTime);
         }
-        
-        // handle updating timers 
-        cpu->decrementTimers();
     }
 
     window->clean();

@@ -11,7 +11,6 @@ void Cpu::op0(uint16_t _op){
 
     if(lo == 0xE0) {
         printf("DISP CLS\n");
-        // TODO - 
         // clear screen pixels
         memset(frame_buffer, BLACK_PIXEL, sizeof(frame_buffer));
         // set draw flag
@@ -21,6 +20,7 @@ void Cpu::op0(uint16_t _op){
     } else if (lo == 0xEE) {
         printf("RET\n");
         PC = stack[SP--];
+        incrementPC();
     } else {
         printf("*CALL 0x%X\n", hi);
         incrementPC();

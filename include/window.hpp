@@ -2,12 +2,7 @@
 #define WINDOW_H
 #include <SDL2/SDL.h>
 #include <iostream>
-#include "cpu.hpp"
-
-#define SCREEN_WIDTH (960)
-#define SCREEN_HEIGHT (480)
-#define WIDTH (64)
-#define HEIGHT (32)
+#include "constants.hpp"
 
 class Window 
 {
@@ -22,7 +17,7 @@ class Window
     ~Window();
     int init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
     void handleRequest();
-    void draw(Cpu _cpu);
+    void draw(bool can_draw, uint32_t *framebuffer);
     void clean();
     bool running() { return isRunning; }
 };

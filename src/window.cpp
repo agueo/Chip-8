@@ -51,10 +51,10 @@ void Window::handleRequest() {
     }
 }
 
-void Window::draw(Cpu _cpu) {
-    if(_cpu.canDraw()) {
+void Window::draw(bool can_draw, uint32_t *framebuffer) {
+    if(can_draw) {
        SDL_RenderClear(renderer);
-       SDL_UpdateTexture(texture, NULL, _cpu.frame_buffer, WIDTH * sizeof(uint32_t));
+       SDL_UpdateTexture(texture, NULL, framebuffer, WIDTH * sizeof(uint32_t));
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
     }
