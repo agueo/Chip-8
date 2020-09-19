@@ -297,7 +297,6 @@ void Cpu::opF(uint16_t _op){
             printf("BCD 0x%02X\n",v[x]);
             // ones place
             memory[I + 2] = (v[x] % 100) % 10;
-            // v[x] /= 10;
             // tens place
             memory[I + 1] = (v[x] / 10) % 10;
             // hundreds place
