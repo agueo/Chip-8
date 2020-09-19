@@ -16,14 +16,13 @@ class Cpu
     uint8_t *op;
 
     uint8_t  v[16];         // Registers
-    uint16_t I;             // direct memory register
     uint8_t  delay;         // delay timer
     uint8_t  sound;         // sound timer
     uint8_t  SP;            // stack pointer
+    uint16_t I;             // direct memory register
     uint16_t PC;            // Program counter
 
     uint16_t stack[16];     // stack 64 bytes
-    uint8_t key_state[16];  // Key map state
     uint8_t saved_key_state[16]; // previous key state
     
     bool draw_flag;      // flag for whether we should draw
@@ -35,6 +34,7 @@ class Cpu
 
     public:
     uint32_t frame_buffer[64*32]; // Screen memory
+    uint8_t key_state[16];  // Key map state
 
     private: 
     void init_cpu();

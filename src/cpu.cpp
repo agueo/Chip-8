@@ -22,9 +22,9 @@ void Cpu::init_cpu(){
     sound = 0;
     SP = 0;
     PC = 0x200;
-    draw_flag = 0;
-    halt_flag = 0;
-    wait_for_key = 0;
+    draw_flag = false;
+    halt_flag = false;
+    wait_for_key = false;
     halt_cpu = false;
     op = NULL;
     // load font data into memory
@@ -119,7 +119,7 @@ void Cpu::decode_execute(){
     uint8_t op_code = (*op & 0xF0) >> 4; 
     uint16_t _op = ((op[0] & 0x0F) << 8) + op[1];
 
-    printf("PC: 0x%04X OP: 0x%02X %02X : ", PC, op[0], op[1]);
+    // printf("PC: 0x%04X OP: 0x%02X %02X : ", PC, op[0], op[1]);
     // pass to correct function
     switch(op_code) {
         case 0x0:

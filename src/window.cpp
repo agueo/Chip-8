@@ -46,8 +46,56 @@ void Window::handleRequest() {
         case SDL_QUIT:
             isRunning = false;
             break;
+        case SDL_KEYDOWN:
+            keyDown(event.key.keysym.sym);
+            break;
+        case SDL_KEYUP:
+            keyUp(event.key.keysym.sym);
+            break;
         default:
             break;
+    }
+}
+
+void Window::keyDown(SDL_Keycode _key) {
+    switch(_key) {
+        case SDLK_1: m_cpu->key_state[0x1] = 1; break;
+        case SDLK_2: m_cpu->key_state[0x2] = 1; break;
+        case SDLK_3: m_cpu->key_state[0x3] = 1; break;
+        case SDLK_4: m_cpu->key_state[0xc] = 1; break;
+        case SDLK_q: m_cpu->key_state[0x4] = 1; break;
+        case SDLK_w: m_cpu->key_state[0x5] = 1; break;
+        case SDLK_e: m_cpu->key_state[0x6] = 1; break;
+        case SDLK_r: m_cpu->key_state[0xd] = 1; break;
+        case SDLK_a: m_cpu->key_state[0x7] = 1; break;
+        case SDLK_s: m_cpu->key_state[0x8] = 1; break;
+        case SDLK_d: m_cpu->key_state[0x9] = 1; break;
+        case SDLK_f: m_cpu->key_state[0xe] = 1; break;
+        case SDLK_z: m_cpu->key_state[0xa] = 1; break;
+        case SDLK_x: m_cpu->key_state[0x0] = 1; break;
+        case SDLK_c: m_cpu->key_state[0xb] = 1; break;
+        case SDLK_v: m_cpu->key_state[0xf] = 1; break;
+    }
+}
+
+void Window::keyUp(SDL_Keycode _key) {
+    switch(_key) {
+        case SDLK_1: m_cpu->key_state[0x1] = 0; break;
+        case SDLK_2: m_cpu->key_state[0x2] = 0; break;
+        case SDLK_3: m_cpu->key_state[0x3] = 0; break;
+        case SDLK_4: m_cpu->key_state[0xc] = 0; break;
+        case SDLK_q: m_cpu->key_state[0x4] = 0; break;
+        case SDLK_w: m_cpu->key_state[0x5] = 0; break;
+        case SDLK_e: m_cpu->key_state[0x6] = 0; break;
+        case SDLK_r: m_cpu->key_state[0xd] = 0; break;
+        case SDLK_a: m_cpu->key_state[0x7] = 0; break;
+        case SDLK_s: m_cpu->key_state[0x8] = 0; break;
+        case SDLK_d: m_cpu->key_state[0x9] = 0; break;
+        case SDLK_f: m_cpu->key_state[0xe] = 0; break;
+        case SDLK_z: m_cpu->key_state[0xa] = 0; break;
+        case SDLK_x: m_cpu->key_state[0x0] = 0; break;
+        case SDLK_c: m_cpu->key_state[0xb] = 0; break;
+        case SDLK_v: m_cpu->key_state[0xf] = 0; break;
     }
 }
 

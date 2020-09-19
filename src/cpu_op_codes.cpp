@@ -23,7 +23,8 @@ void Cpu::op0(uint16_t _op){
         incrementPC();
     } else {
         printf("*CALL 0x%X\n", hi);
-        incrementPC();
+        PC = _op;
+        //incrementPC();
     }
 }
 
@@ -214,12 +215,18 @@ void Cpu::opE(uint16_t _op){
     lo = (_op & 0x0FF);
     if(lo == 0x9E) {
         printf("KEY DOWN V%X\n", x);
-        // TODO - get key down
+        // if key pressed
+        if(key_state[v[x]] == 1) {
+            incrementPC();
+        }
         incrementPC();
     }
     else if(lo == 0xA1) {
         printf("KEY up V%X\n", x);
-        // TODO - get key up
+        // if key not pressed
+        if(key_state[v[x]] == 0) {
+            incrementPC();
+        }
         incrementPC();
     }
     else {
@@ -240,16 +247,42 @@ void Cpu::opF(uint16_t _op){
             v[x] = delay;
             break;
         case 0x0A:
-            printf("KEY WAIT\n");
-            // TODO - blocking operation 
-            PC -= 2;
+            // printf("KEY WAIT\n");
+            if(wait_for_key == 0) {
+                // start waitkey cycle
+                memcpy(saved_key_state, key_state, sizeof(key_state));
+                // set waitkey
+                wait_for_key = true;
+                // don't increment PC
+                return;
+            } else {
+                // look for change in key state
+                for(int i = 0; i < 0xF; ++i) {
+                    // if key state changed
+                    if((saved_key_state[i] == 0) && (key_state[i] == 1)) {
+                        // reset waitkey flag
+                        wait_for_key = false;
+                        // save key changed
+                        v[x] = i;
+                        // increment
+                        incrementPC();
+                        return;
+                    }
+                    // otherwise save key state
+                    saved_key_state[i] = key_state[i];
+                }
+                // if no key changed
+                return;
+            }
             break;
         case 0x15:
-            printf("TIMER SET\n");
+            printf("TIMER SET V%X\n", x);
+            printf(" - %d\n", v[x]);
             delay = v[x];
             break;
         case 0x18:
-            printf("SOUND SET\n");
+            printf("SOUND SET V%X\n", x);
+            printf(" - %d\n", v[x]);
             sound = v[x];
             break;
         case 0x1E:
@@ -257,30 +290,34 @@ void Cpu::opF(uint16_t _op){
             I += (uint16_t) v[x];
             break;
         case 0x29:
-            printf("SPRITE\n");
+            printf("SPRITE V%X\n", x);
             I = (uint16_t) v[x] * 5;
             break;
         case 0x33:
-            printf("BCD\n");
+            printf("BCD 0x%02X\n",v[x]);
             // ones place
-            memory[I + 2] = v[x] % 10;
-            v[x] /= 10;
+            memory[I + 2] = (v[x] % 100) % 10;
+            // v[x] /= 10;
             // tens place
-            memory[I + 1] = v[x] % 10;
+            memory[I + 1] = (v[x] / 10) % 10;
             // hundreds place
-            memory[I] = v[x] / 10;
+            memory[I] = v[x] / 100;
+            printf(" - %d%d%d\n", memory[I], memory[I+1], memory[I+2]);
             break;
         case 0x55:
-            printf("REG DUMP\n");
-            for(int i = 0; i < 16; i++){
+            printf("REG DUMP V%X\n", x);
+            for(int i = 0; i <= x; i++){
                 memory[I+i] = v[i];
             }
+            I += x + 1;
             break;
         case 0x65:
-            printf("REG LOAD\n");
-            for(int i = 0; i < 16; i++){
+            printf("REG LOAD V%X\n", x);
+            for(int i = 0; i <= x; i++){
+                printf(" - V%X - %d\n", i, memory[I+i]);
                 v[i] = memory[I+i];
             }
+            I += x + 1;
             break;
         default:
             printf("OpF not yet implemented 0x%X\n", _op);

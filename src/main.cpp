@@ -13,7 +13,7 @@ Cpu *cpu = nullptr;
 
 int main(int argc, char *argv[]){
     // TODO - fix FPS for 60Hz f = 1/t -> t = 1/f == 1/(60)
-    const int FPS = 30;
+    const int FPS = 60;
     const int frameDelay = 1000 / FPS;
     Uint32 frameStart;
     Uint32 frameTime;
@@ -39,24 +39,13 @@ int main(int argc, char *argv[]){
 
     // Create CPU
     cpu = new Cpu();
+    window->connect_cpu(cpu);
 
     if(cpu->loadRom(argv[1]) == 0)
     {
         std::cout << "Failed to load ROM" << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    /*
-    while(!cpu->isHalted()) {
-        //cpu->disassemble_program();
-        cpu->fetch();
-        cpu->decode_execute();
-
-        if(cpu->debugPC() > 4096){
-            cpu->setHaltCpu(true);
-        }
-    }
-    */
 
     while(window->running()) {
         // get the time since window was created
