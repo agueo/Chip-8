@@ -13,7 +13,7 @@ Cpu *cpu = nullptr;
 
 int main(int argc, char *argv[]){
     // TODO - fix FPS for 60Hz f = 1/t -> t = 1/f == 1/(60)
-    const int FPS = 60;
+    const int FPS = 180;
     const int frameDelay = 1000 / FPS;
     Uint32 frameStart;
     Uint32 frameTime;

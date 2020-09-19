@@ -34,7 +34,7 @@ release: CXXFLAGS += -O2
 release: all
 
 run: 
-	$(APP_DIR)/$(TARGET) ROMS/programs/ClockProgram.ch8
+	$(APP_DIR)/$(TARGET) ROMS/games/Breakout\ \(Brix\ hack\)\ \[David\ Winter,\ 1997\].ch8
 
 clean:
 	-@rm -rvf $(OBJ_DIR)/*

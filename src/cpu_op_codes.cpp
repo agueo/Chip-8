@@ -5,8 +5,7 @@ void Cpu::op0(uint16_t _op){
      * op is 2 bytes 0xXX XX 1 byte == 0x00 8 buts
      * _op = 0x0XXX
      */
-    uint8_t hi, lo;
-    hi = (_op & 0xF00) >> 8;
+    uint8_t lo;
     lo = (_op & 0x0FF);
 
     if(lo == 0xE0) {
@@ -22,9 +21,9 @@ void Cpu::op0(uint16_t _op){
         PC = stack[SP--];
         incrementPC();
     } else {
-        printf("*CALL 0x%X\n", hi);
-        PC = _op;
-        //incrementPC();
+        printf("*CALL 0x%X\n", _op);
+        //PC = _op;
+        incrementPC();
     }
 }
 
@@ -120,7 +119,8 @@ void Cpu::op8(uint16_t _op){
             break;
         case 0x4:
             printf("ADD* V%X V%X\n", x, y);
-            v[0xF] = (v[x] + v[y] > 0xFF) ? 1 : 0;
+            v[0xF] = (v[x] > ( 0xFF - v[y] )) ? 1 : 0;
+            printf("- x %x y %x c %x\n", v[x], v[y], v[0xF]);
             v[x] = v[x] + v[y];
             break;
         case 0x5:
@@ -214,20 +214,20 @@ void Cpu::opE(uint16_t _op){
     x = (_op & 0xF00) >> 8;
     lo = (_op & 0x0FF);
     if(lo == 0x9E) {
-        printf("KEY DOWN V%X\n", x);
+        printf("KEY DOWN V%X %x\n", x, v[x]);
         // if key pressed
         if(key_state[v[x]] == 1) {
+            printf("%x was pressed\n", v[x]);
             incrementPC();
         }
-        incrementPC();
     }
     else if(lo == 0xA1) {
-        printf("KEY up V%X\n", x);
+        printf("KEY up V%X %x\n", x, v[x]);
         // if key not pressed
         if(key_state[v[x]] == 0) {
+            printf("%x was up\n", v[x]);
             incrementPC();
         }
-        incrementPC();
     }
     else {
         printf("opE 0x%03X not implemented\n", _op);
@@ -244,10 +244,11 @@ void Cpu::opF(uint16_t _op){
     switch(lo) {
         case 0x07: // Timer get
             printf("TIMER GET\n");
+            printf(" - %d\n", delay);
             v[x] = delay;
             break;
         case 0x0A:
-            // printf("KEY WAIT\n");
+            printf("KEY WAIT\n");
             if(wait_for_key == 0) {
                 // start waitkey cycle
                 memcpy(saved_key_state, key_state, sizeof(key_state));
