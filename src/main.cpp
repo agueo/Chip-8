@@ -12,7 +12,6 @@ Window *window = nullptr;
 Cpu *cpu = nullptr;
 
 int main(int argc, char *argv[]){
-    // TODO - fix FPS for 60Hz f = 1/t -> t = 1/f == 1/(60)
     const int FPS = 180;
     const int frameDelay = 1000 / FPS;
     Uint32 frameStart;
@@ -29,13 +28,10 @@ int main(int argc, char *argv[]){
     std::cout << "Creating window..." << std::endl;
 
     window = new Window();
-    std::cout << "Calling init window..." << std::endl;
     if(window->init("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, false)){
         std::cout << "Failed to initialize window";
         exit(EXIT_FAILURE);
     }
-
-    std::cout << "Successfully created window..." << std::endl;
 
     // Create CPU
     cpu = new Cpu();
@@ -53,7 +49,7 @@ int main(int argc, char *argv[]){
 
         // Do CPU cycle
         cpu->fetch();
-        cpu->decode_execute();
+        cpu->decode_execute(DISASSEMBLE);
 
         // handle window changes, updates, and render
         window->handleRequest();        

@@ -9,10 +9,11 @@
 #include <string.h>
 #include "constants.hpp"
 
+#define DISASSEMBLE (1)
+
 class Cpu 
 {
     private:
-    // opcode variable ?
     uint8_t *op;
 
     uint8_t  v[16];         // Registers
@@ -45,7 +46,7 @@ class Cpu
     /* core functions */
     bool loadRom(const char *filename);
     void fetch();
-    void decode_execute();
+    void decode_execute(bool disasemble = false);
     void reset_system();
 
     /* Helper functions */
@@ -64,10 +65,10 @@ class Cpu
     void decrementTimers();
 
     // Opcode Functions
-    void op0(uint16_t _op); void op1(uint16_t _op); void op2(uint16_t _op); void op3(uint16_t _op);
-    void op4(uint16_t _op); void op5(uint16_t _op); void op6(uint16_t _op); void op7(uint16_t _op);
-    void op8(uint16_t _op); void op9(uint16_t _op); void opA(uint16_t _op); void opB(uint16_t _op);
-    void opC(uint16_t _op); void opD(uint16_t _op); void opE(uint16_t _op); void opF(uint16_t _op);
+    void op0(uint16_t _op, bool disassemble=false); void op1(uint16_t _op, bool disassemble=false); void op2(uint16_t _op, bool disassemble=false); void op3(uint16_t _op, bool disassemble=false);
+    void op4(uint16_t _op, bool disassemble=false); void op5(uint16_t _op, bool disassemble=false); void op6(uint16_t _op, bool disassemble=false); void op7(uint16_t _op, bool disassemble=false);
+    void op8(uint16_t _op, bool disassemble=false); void op9(uint16_t _op, bool disassemble=false); void opA(uint16_t _op, bool disassemble=false); void opB(uint16_t _op, bool disassemble=false);
+    void opC(uint16_t _op, bool disassemble=false); void opD(uint16_t _op, bool disassemble=false); void opE(uint16_t _op, bool disassemble=false); void opF(uint16_t _op, bool disassemble=false);
 };
 
 // font data

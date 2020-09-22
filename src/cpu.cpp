@@ -33,10 +33,6 @@ void Cpu::init_cpu(){
     std::cout << "Initialization complete!" << std::endl;
 }
 
-/* TODO - optimize RC
- * FIXME - BUG when reading in some files
- * Look into reading files using C++ iostream/fstream
- */
 bool Cpu::loadRom(const char *filename) 
 {
     std::cout << "Loading " << filename << std::endl;
@@ -52,23 +48,15 @@ bool Cpu::loadRom(const char *filename)
     uint file_size = ftell(fp);
     rewind(fp);
 
-    std::cout << "Filesize: " << file_size << std::endl;
-
     if(file_size > MAX_ROM_SIZE) {
         std::cout << "Filesize too big!" << std::endl;
         return 0;
     }
 
-    std::cout << "Creating buffer for file contents" << std::endl;
     uint8_t *buffer = (uint8_t *)calloc(1, sizeof(uint8_t) * file_size);
-
-    std::cout << "Reading in contents" << std::endl;
     size_t bytes = fread(buffer, sizeof(uint8_t), file_size, fp);
-
-    std::cout << "Closing filehandle" << std::endl;
     fclose(fp);
 
-    std::cout << "Closed filehandle" << std::endl;
     if(bytes != file_size) {
         std::cout << "Failed to read FILE!";
         free(buffer);
@@ -111,7 +99,7 @@ void Cpu::fetch(){
     op = &memory[PC];
 }
 
-void Cpu::decode_execute(){
+void Cpu::decode_execute(bool disassemble){
     // opcode - 0xXX XX
     // 2 bytes each
 
@@ -119,56 +107,56 @@ void Cpu::decode_execute(){
     uint8_t op_code = (*op & 0xF0) >> 4; 
     uint16_t _op = ((op[0] & 0x0F) << 8) + op[1];
 
-    printf("PC: 0x%04X OP: 0x%02X %02X : ", PC, op[0], op[1]);
+    if(disassemble) printf("PC: 0x%04X OP: 0x%02X %02X : ", PC, op[0], op[1]);
     // pass to correct function
     switch(op_code) {
         case 0x0:
-            op0(_op);
+            op0(_op, disassemble);
             break;
         case 0x1:
-            op1(_op);
+            op1(_op, disassemble);
             break;
         case 0x2:
-            op2(_op);
+            op2(_op, disassemble);
             break;
         case 0x3:
-            op3(_op);
+            op3(_op, disassemble);
             break;
         case 0x4:
-            op4(_op);
+            op4(_op, disassemble);
             break;
         case 0x5:
-            op5(_op);
+            op5(_op, disassemble);
             break;
         case 0x6:
-            op6(_op);
+            op6(_op, disassemble);
             break;
         case 0x7:
-            op7(_op);
+            op7(_op, disassemble);
             break;
         case 0x8:
-            op8(_op);
+            op8(_op, disassemble);
             break;
         case 0x9:
-            op9(_op);
+            op9(_op, disassemble);
             break;
         case 0xA:
-            opA(_op);
+            opA(_op, disassemble);
             break;
         case 0xB:
-            opB(_op);
+            opB(_op, disassemble);
             break;
         case 0xC:
-            opC(_op);
+            opC(_op, disassemble);
             break;
         case 0xD:
-            opD(_op);
+            opD(_op, disassemble);
             break;
         case 0xE:
-            opE(_op);
+            opE(_op, disassemble);
             break;
         case 0xF:
-            opF(_op);
+            opF(_op, disassemble);
             break;
         default:
             std::cout << "unimplemented" << std::endl;
