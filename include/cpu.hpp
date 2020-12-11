@@ -9,7 +9,7 @@
 #include <string.h>
 #include "constants.hpp"
 
-#define DISASSEMBLE (1)
+#define DISASSEMBLE (0)
 
 class Cpu 
 {
