@@ -3,16 +3,14 @@
  *
  * Author: Agueo Lopez
  */
+#include "audio_driver.h"
+#include "cpu.hpp"
+#include "window.hpp"
 
-#include "../include/window.hpp"
-#include "../include/cpu.hpp"
-
-// Could change to local var
-Window *window = nullptr;
-Cpu *cpu = nullptr;
+#include <memory>
 
 int main(int argc, char *argv[]){
-    const int FPS = 180;
+    const int FPS = 60;
     const int frameDelay = 1000 / FPS;
     Uint32 frameStart;
     Uint32 frameTime;
@@ -21,47 +19,42 @@ int main(int argc, char *argv[]){
     if(argc != 2) {
         std::cout << "usage\n ./chip_8 <program>" << std::endl;
         return(1);
-    } else {
-        std::cout << argv[1] << std::endl;
-    }
-
-    std::cout << "Creating window..." << std::endl;
-
-    window = new Window();
-    if(window->init("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, false)){
-        std::cout << "Failed to initialize window";
-        exit(EXIT_FAILURE);
-    }
+    } 
 
     // Create CPU
-    cpu = new Cpu();
-    window->connect_cpu(cpu);
+    Cpu cpu{};
+    AudioDriver audio_driver{};
 
-    if(cpu->loadRom(argv[1]) == 0)
+    // TODO look into this relationship and see if we can keep them separate
+    std::cout << "Creating window..." << std::endl;
+    Window window{argv[1], SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, false, cpu};
+     
+    // load rom
+    if(cpu.loadRom(argv[1]) == 0)
     {
         std::cout << "Failed to load ROM" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    while(window->running()) {
+    while(window.running()) {
         // get the time since window was created
         frameStart = SDL_GetTicks();
 
-        // Do CPU cycle
-        cpu->fetch();
-        cpu->decode_execute(DISASSEMBLE);
+        // handle updating timers 
+        cpu.decrementTimers();
 
         // handle window changes, updates, and render
-        window->handleRequest();        
+        window.handleRequest();        
+
+        // Do CPU cycle
+        cpu.fetch();
+        cpu.decode_execute(DISASSEMBLE);
 
         // Handle screen updates
-        window->draw(cpu->canDraw(), cpu->frame_buffer);
+        window.draw(cpu.canDraw(), cpu.getFrameBuffer());
 
-        // reset draw flag
-        cpu->setDrawFlag(false);
-        
-        // handle updating timers 
-        cpu->decrementTimers();
+        // play sound
+        audio_driver.beep(cpu.beep());
 
         // time it took to handle requests
         frameTime = SDL_GetTicks() - frameStart;
@@ -69,8 +62,6 @@ int main(int argc, char *argv[]){
             SDL_Delay(frameDelay - frameTime);
         }
     }
-
-    window->clean();
 
     return 0;
 }

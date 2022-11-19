@@ -1,16 +1,7 @@
-#include "../include/window.hpp"
+#include "window.hpp"
 
-Window::Window()
-{
-    window = nullptr;
-    renderer = nullptr;
-    texture = nullptr;
-    isRunning = false;
-}
-
-Window::~Window() {}
-
-int Window::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
+Window::Window(const char *title, int xpos, int ypos, int width, int height, bool fullscreen, Cpu &cpu)
+    : window{nullptr}, renderer{nullptr}, texture{nullptr}, isRunning{false}, m_cpu{cpu}
 {
     int flags = SDL_WINDOW_SHOWN;
     if (fullscreen) {
@@ -18,25 +9,33 @@ int Window::init(const char *title, int xpos, int ypos, int width, int height, b
     }
 
     // initialize 
-    if(SDL_Init(SDL_INIT_EVERYTHING) == 0) {
+    if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTS) == 0) {
         window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-        if(!window) return 1;
-        std::cout << "Window Created ..." << std::endl;
+        if(!window) return;
+        SDL_Log("Window created...");
 
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-        if(!renderer) return 1;
-        std::cout << "Renderer Created ..." << std::endl;
+        if(!renderer) return;
+        SDL_Log("Renderer created...");
 
         texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HEIGHT);
-        if(!texture) return 1;
-        std::cout << "Texture Created... " << std::endl;
+        SDL_Log("Texture created...");
 
         SDL_RenderClear(renderer);
         SDL_RenderPresent(renderer);
-        std::cout << "setting run flag..." << std::endl;
+
+        SDL_Log("Setting run flag");
         isRunning = true;
     }
-    return 0;
+}
+
+Window::~Window() noexcept { 
+    SDL_DestroyTexture(texture);
+    std::cout << "Texture destroyed!" << std::endl;
+    SDL_DestroyRenderer(renderer);
+    std::cout << "Renderer destroyed!" << std::endl;
+    SDL_DestroyWindow(window);
+    std::cout << "Window destroyed!" << std::endl;
 }
 
 void Window::handleRequest() {
@@ -59,60 +58,51 @@ void Window::handleRequest() {
 
 void Window::keyDown(SDL_Keycode _key) {
     switch(_key) {
-        case SDLK_1: m_cpu->key_state[0x1] = 1; break;
-        case SDLK_2: m_cpu->key_state[0x2] = 1; break;
-        case SDLK_3: m_cpu->key_state[0x3] = 1; break;
-        case SDLK_4: m_cpu->key_state[0xc] = 1; break;
-        case SDLK_q: m_cpu->key_state[0x4] = 1; break;
-        case SDLK_w: m_cpu->key_state[0x5] = 1; break;
-        case SDLK_e: m_cpu->key_state[0x6] = 1; break;
-        case SDLK_r: m_cpu->key_state[0xd] = 1; break;
-        case SDLK_a: m_cpu->key_state[0x7] = 1; break;
-        case SDLK_s: m_cpu->key_state[0x8] = 1; break;
-        case SDLK_d: m_cpu->key_state[0x9] = 1; break;
-        case SDLK_f: m_cpu->key_state[0xe] = 1; break;
-        case SDLK_z: m_cpu->key_state[0xa] = 1; break;
-        case SDLK_x: m_cpu->key_state[0x0] = 1; break;
-        case SDLK_c: m_cpu->key_state[0xb] = 1; break;
-        case SDLK_v: m_cpu->key_state[0xf] = 1; break;
+        case SDLK_1: m_cpu.key_state[0x1] = 1; break;
+        case SDLK_2: m_cpu.key_state[0x2] = 1; break;
+        case SDLK_3: m_cpu.key_state[0x3] = 1; break;
+        case SDLK_4: m_cpu.key_state[0xc] = 1; break;
+        case SDLK_q: m_cpu.key_state[0x4] = 1; break;
+        case SDLK_w: m_cpu.key_state[0x5] = 1; break;
+        case SDLK_e: m_cpu.key_state[0x6] = 1; break;
+        case SDLK_r: m_cpu.key_state[0xd] = 1; break;
+        case SDLK_a: m_cpu.key_state[0x7] = 1; break;
+        case SDLK_s: m_cpu.key_state[0x8] = 1; break;
+        case SDLK_d: m_cpu.key_state[0x9] = 1; break;
+        case SDLK_f: m_cpu.key_state[0xe] = 1; break;
+        case SDLK_z: m_cpu.key_state[0xa] = 1; break;
+        case SDLK_x: m_cpu.key_state[0x0] = 1; break;
+        case SDLK_c: m_cpu.key_state[0xb] = 1; break;
+        case SDLK_v: m_cpu.key_state[0xf] = 1; break;
     }
 }
 
 void Window::keyUp(SDL_Keycode _key) {
     switch(_key) {
-        case SDLK_1: m_cpu->key_state[0x1] = 0; break;
-        case SDLK_2: m_cpu->key_state[0x2] = 0; break;
-        case SDLK_3: m_cpu->key_state[0x3] = 0; break;
-        case SDLK_4: m_cpu->key_state[0xc] = 0; break;
-        case SDLK_q: m_cpu->key_state[0x4] = 0; break;
-        case SDLK_w: m_cpu->key_state[0x5] = 0; break;
-        case SDLK_e: m_cpu->key_state[0x6] = 0; break;
-        case SDLK_r: m_cpu->key_state[0xd] = 0; break;
-        case SDLK_a: m_cpu->key_state[0x7] = 0; break;
-        case SDLK_s: m_cpu->key_state[0x8] = 0; break;
-        case SDLK_d: m_cpu->key_state[0x9] = 0; break;
-        case SDLK_f: m_cpu->key_state[0xe] = 0; break;
-        case SDLK_z: m_cpu->key_state[0xa] = 0; break;
-        case SDLK_x: m_cpu->key_state[0x0] = 0; break;
-        case SDLK_c: m_cpu->key_state[0xb] = 0; break;
-        case SDLK_v: m_cpu->key_state[0xf] = 0; break;
+        case SDLK_1: m_cpu.key_state[0x1] = 0; break;
+        case SDLK_2: m_cpu.key_state[0x2] = 0; break;
+        case SDLK_3: m_cpu.key_state[0x3] = 0; break;
+        case SDLK_4: m_cpu.key_state[0xc] = 0; break;
+        case SDLK_q: m_cpu.key_state[0x4] = 0; break;
+        case SDLK_w: m_cpu.key_state[0x5] = 0; break;
+        case SDLK_e: m_cpu.key_state[0x6] = 0; break;
+        case SDLK_r: m_cpu.key_state[0xd] = 0; break;
+        case SDLK_a: m_cpu.key_state[0x7] = 0; break;
+        case SDLK_s: m_cpu.key_state[0x8] = 0; break;
+        case SDLK_d: m_cpu.key_state[0x9] = 0; break;
+        case SDLK_f: m_cpu.key_state[0xe] = 0; break;
+        case SDLK_z: m_cpu.key_state[0xa] = 0; break;
+        case SDLK_x: m_cpu.key_state[0x0] = 0; break;
+        case SDLK_c: m_cpu.key_state[0xb] = 0; break;
+        case SDLK_v: m_cpu.key_state[0xf] = 0; break;
     }
 }
 
 void Window::draw(bool can_draw, uint32_t *framebuffer) {
-    if(can_draw) {
-       SDL_RenderClear(renderer);
-       SDL_UpdateTexture(texture, NULL, framebuffer, WIDTH * sizeof(uint32_t));
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
-        SDL_RenderPresent(renderer);
-    }
-}
+    if(!can_draw) return;
 
-void Window::clean() {
-    SDL_DestroyTexture(texture);
-    std::cout << "Texture destroyed!" << std::endl;
-    SDL_DestroyRenderer(renderer);
-    std::cout << "Renderer destroyed!" << std::endl;
-    SDL_DestroyWindow(window);
-    std::cout << "Window destroyed!" << std::endl;
+    SDL_RenderClear(renderer);
+    SDL_UpdateTexture(texture, NULL, framebuffer, WIDTH * sizeof(uint32_t));
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
 }

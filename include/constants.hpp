@@ -1,5 +1,7 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef _CONSTANTS_H_
+#define _CONSTANTS_H_
+
+#include <cstdint>
 
 #define WIDTH (64)
 #define HEIGHT (32)

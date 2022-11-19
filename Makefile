@@ -1,13 +1,13 @@
-CXX			:= -c++
-CXXFLAGS 	:= -pedantic-errors -Wall -Wextra -Werror
-LDFLAGS 	:= `sdl2-config --libs --cflags` -lSDL2_image -lm
+CXX			:= g++
+CXXFLAGS 	:= -pedantic-errors -Wall -Wextra -Werror -std=c++20
+CXXFLAGS 	+= `sdl2-config --cflags`
+LDFLAGS 	:= `sdl2-config --libs` -lm
 BUILD 		:= ./build
 OBJ_DIR		:= $(BUILD)/objects
 APP_DIR		:= $(BUILD)/apps
 TARGET		:= chip_8
 INCLUDE		:= -Iinclude/
-SRC			:= \
-	$(wildcard src/*.cpp)
+SRC			:= $(wildcard src/*.cpp)
 
 OBJECTS		:= $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 
@@ -15,7 +15,7 @@ all: build $(APP_DIR)/$(TARGET)
 
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@ ${LDFLAGS}
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 $(APP_DIR)/$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
@@ -30,7 +30,7 @@ build:
 debug: CXXFLAGS += -DDEBUG -g
 debug: all
 
-release: CXXFLAGS += -O2
+release: CXXFLAGS += -O3
 release: all
 
 run: 

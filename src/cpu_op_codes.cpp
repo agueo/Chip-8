@@ -1,6 +1,10 @@
-#include "../include/cpu.hpp"
+#include <algorithm>
+#include <array>
+#include <vector>
 
-void Cpu::op0(uint16_t _op, bool disassemble){
+#include "cpu.hpp"
+
+void Cpu::op0(uint16_t _op, bool disassemble) noexcept {
     /*
      * op is 2 bytes 0xXX XX 1 byte == 0x00 8 buts
      * _op = 0x0XXX
@@ -11,7 +15,7 @@ void Cpu::op0(uint16_t _op, bool disassemble){
     if(lo == 0xE0) {
         if(disassemble) printf("DISP CLS\n");
         // clear screen pixels
-        memset(frame_buffer, BLACK_PIXEL, sizeof(frame_buffer));
+        std::fill(frame_buffer.begin(), frame_buffer.end(), BLACK_PIXEL);
         // set draw flag
         setDrawFlag(true);
         // inc PC
@@ -27,18 +31,18 @@ void Cpu::op0(uint16_t _op, bool disassemble){
     }
 }
 
-void Cpu::op1(uint16_t _op, bool disassemble){
+void Cpu::op1(uint16_t _op, bool disassemble) noexcept {
     if(disassemble) printf("JMP 0x%02X\n", _op);
     PC = _op;
 }
 
-void Cpu::op2(uint16_t _op, bool disassemble){
+void Cpu::op2(uint16_t _op, bool disassemble) noexcept {
     if(disassemble) printf("Call 0x%02X\n", _op);
     stack[++SP] = PC;
     PC = _op;
 }
 
-void Cpu::op3(uint16_t _op, bool disassemble){
+void Cpu::op3(uint16_t _op, bool disassemble) noexcept {
     uint8_t hi, lo;
     hi = (_op & 0xF00) >> 8;
     lo = (_op & 0x0FF);
@@ -49,7 +53,7 @@ void Cpu::op3(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::op4(uint16_t _op, bool disassemble){
+void Cpu::op4(uint16_t _op, bool disassemble) noexcept {
     uint8_t x, lo;
     x = (_op & 0xF00) >> 8;
     lo = (_op & 0x0FF);
@@ -60,7 +64,7 @@ void Cpu::op4(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::op5(uint16_t _op, bool disassemble){
+void Cpu::op5(uint16_t _op, bool disassemble) noexcept {
     uint8_t x, y;
     x = (_op & 0xF00) >> 8;
     y = (_op & 0x0F0) >> 4;
@@ -71,7 +75,7 @@ void Cpu::op5(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::op6(uint16_t _op, bool disassemble){
+void Cpu::op6(uint16_t _op, bool disassemble) noexcept {
     uint8_t x, lo;
     x = (_op & 0xF00) >> 8;
     lo = (_op & 0x0FF);
@@ -80,7 +84,7 @@ void Cpu::op6(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::op7(uint16_t _op, bool disassemble){
+void Cpu::op7(uint16_t _op, bool disassemble) noexcept{
     uint8_t x, lo;
     x = (_op & 0xF00) >> 8;
     lo = (_op & 0x0FF);
@@ -89,7 +93,7 @@ void Cpu::op7(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::op8(uint16_t _op, bool disassemble){
+void Cpu::op8(uint16_t _op, bool disassemble) noexcept{
     /*
      * _op is 2 bytes long
      * _op = 0xFFFF
@@ -150,7 +154,7 @@ void Cpu::op8(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::op9(uint16_t _op, bool disassemble){
+void Cpu::op9(uint16_t _op, bool disassemble) noexcept{
     uint8_t x, y;
     x = (_op & 0xF00) >> 8;
     y = (_op & 0x0F0) >> 4;
@@ -161,18 +165,18 @@ void Cpu::op9(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::opA(uint16_t _op, bool disassemble){
+void Cpu::opA(uint16_t _op, bool disassemble) noexcept{
     if(disassemble) printf("LD I [0x%03X]\n", _op);
     I = _op;
     incrementPC();
 }
 
-void Cpu::opB(uint16_t _op, bool disassemble){
+void Cpu::opB(uint16_t _op, bool disassemble) noexcept{
     if(disassemble) printf("JMP V0 0x%03X\n", _op);
     PC = v[0] + _op;
 }
 
-void Cpu::opC(uint16_t _op, bool disassemble){
+void Cpu::opC(uint16_t _op, bool disassemble) noexcept{
     uint8_t x, lo;
     x = (_op & 0xF00) >> 8;
     lo = (_op & 0x0FF);
@@ -181,7 +185,7 @@ void Cpu::opC(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::opD(uint16_t _op, bool disassemble){
+void Cpu::opD(uint16_t _op, bool disassemble) noexcept{
     uint8_t x, y, height;
     x = (_op  & 0xF00) >> 8;
     y = (_op  & 0x0F0) >> 4;
@@ -208,7 +212,7 @@ void Cpu::opD(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::opE(uint16_t _op, bool disassemble){
+void Cpu::opE(uint16_t _op, bool disassemble) noexcept{
     uint8_t x, lo;
     x = (_op & 0xF00) >> 8;
     lo = (_op & 0x0FF);
@@ -233,7 +237,7 @@ void Cpu::opE(uint16_t _op, bool disassemble){
     incrementPC();
 }
 
-void Cpu::opF(uint16_t _op, bool disassemble){
+void Cpu::opF(uint16_t _op, bool disassemble) noexcept {
     uint8_t x, lo;
     x = (_op & 0xF00) >> 8;
     lo = (_op & 0x0FF);
@@ -247,7 +251,7 @@ void Cpu::opF(uint16_t _op, bool disassemble){
             if(disassemble) printf("KEY WAIT\n");
             if(wait_for_key == 0) {
                 // start waitkey cycle
-                memcpy(saved_key_state, key_state, sizeof(key_state));
+                std::copy(key_state.cbegin(), key_state.cend(), saved_key_state.begin());
                 // set waitkey
                 wait_for_key = true;
                 // don't increment PC
