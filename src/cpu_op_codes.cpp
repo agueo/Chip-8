@@ -129,7 +129,7 @@ void Cpu::op8(uint16_t _op, bool disassemble) noexcept{
         case 0x5:
             if(disassemble) printf("SUB* V%X V%X\n", x, y);
             // borrow flag - if borrow necessary -> 0 else 1
-            v[0xf] = (v[y] > v[x]) ? 0 : 1;
+            v[0xf] = (v[x] > v[y]) ? 1 : 0;
             v[x] = v[x] - v[y];
             break;
         case 0x6:
@@ -140,7 +140,7 @@ void Cpu::op8(uint16_t _op, bool disassemble) noexcept{
         case 0x7:
             if(disassemble) printf("SUB* V%X V%X\n", y, x);
             // borrow flag - if borrow necessary -> 0 else 1
-            v[0xf] = (v[x] > v[y]) ? 0 : 1;
+            v[0xf] = (v[y] > v[x]) ? 1 : 0;
             v[x] = v[y] - v[x];
             break;
         case 0xE:
@@ -159,7 +159,7 @@ void Cpu::op9(uint16_t _op, bool disassemble) noexcept{
     x = (_op & 0xF00) >> 8;
     y = (_op & 0x0F0) >> 4;
     if(disassemble) printf("SNE V%X V%X\n", x, y);
-    if(v[x] == v[y]) {
+    if(v[x] != v[y]) {
         incrementPC();
     }
     incrementPC();
@@ -193,8 +193,8 @@ void Cpu::opD(uint16_t _op, bool disassemble) noexcept{
     if(disassemble) printf("DRAW 0x%03X\n", _op);
 
     v[0xF] = 0;
-    for(int line = 0; line < height; line++) {
-        for(int bit = 0; bit < 8; bit++) {
+    for(int line = 0; line < height; ++line) {
+        for(int bit = 0; bit < 8; ++bit) {
             uint32_t sprite = memory[I + line];
             // get the pixel to set from MSB
             // if we need to set the pixel 
@@ -290,7 +290,7 @@ void Cpu::opF(uint16_t _op, bool disassemble) noexcept {
             break;
         case 0x29:
             if(disassemble) printf("SPRITE V%X\n", x);
-            I = (uint16_t) v[x] * 5;
+            I = (uint16_t) (v[x] * 5);
             break;
         case 0x33:
             if(disassemble) printf("BCD 0x%02X\n",v[x]);

@@ -36,6 +36,7 @@ Window::~Window() noexcept {
     std::cout << "Renderer destroyed!" << std::endl;
     SDL_DestroyWindow(window);
     std::cout << "Window destroyed!" << std::endl;
+    SDL_Quit();
 }
 
 void Window::handleRequest() {

@@ -1,5 +1,5 @@
 CXX			:= g++
-CXXFLAGS 	:= -pedantic-errors -Wall -Wextra -Werror -std=c++20
+CXXFLAGS 	:= -Wall -Wextra -Werror -Wpedantic -std=c++20
 CXXFLAGS 	+= `sdl2-config --cflags`
 LDFLAGS 	:= `sdl2-config --libs` -lm
 BUILD 		:= ./build

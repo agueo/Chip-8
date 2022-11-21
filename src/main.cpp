@@ -10,16 +10,16 @@
 #include <memory>
 
 int main(int argc, char *argv[]){
-    const int FPS = 60;
-    const int frameDelay = 1000 / FPS;
-    Uint32 frameStart;
-    Uint32 frameTime;
-
     // Get ROM name
     if(argc != 2) {
         std::cout << "usage\n ./chip_8 <program>" << std::endl;
         return(1);
     } 
+
+    const int FPS = 60;
+    const int frameDelay = 1000 / FPS;
+    Uint32 frameStart;
+    Uint32 frameTime;
 
     // Create CPU
     Cpu cpu{};
@@ -62,6 +62,7 @@ int main(int argc, char *argv[]){
             SDL_Delay(frameDelay - frameTime);
         }
     }
+
 
     return 0;
 }
